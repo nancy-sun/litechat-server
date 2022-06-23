@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const room = require("./routes/room");
 
 const cors = require("cors");
 require("dotenv").config();
@@ -11,29 +12,33 @@ const { Server } = require("socket.io");
 const io = new Server(server, {
     cors: {
         origin: `http://localhost:3000`, //react frontend url
-        methods: ["GET", "POST"]
+        methods: ["GET", "POST", "DELETE"]
     }
 });
 
+app.use(express.json());
 app.use(cors());
+app.use("/room", room);
 
 io.on("connection", (socket) => {
-    // socket.on("join room", (roomID, username) => {
-    //     // socket.join(roomID);
-    //     // socketRoom[socket.id]=roooID
-    //     // console.log("user disconnected")
-    //     io.emit("connected");
-    //     console.log(socket.id)
-    // })
-    console.log("user connected", socket.id);
-    socket.on("sendMsg", (data) => {
-        socket.broadcast.emit("receiveMsg", data);
-        socket.emit("receiveMsg", data);
-    })
-})
+    // console.log('connection')
 
-app.get('/', (req, res) => {
-    res.send("hello world");
-});
+    socket.on("join", (data, callback) => {
+        socket.join(data);
+        console.log(`${socket.id} joined room ${data}`)
+        callback(socket.id);
+    })
+
+    socket.on("sendMsg", (data) => {
+        console.log("msg data", data)
+        socket.broadcast.to(data.room).emit("receiveMsg", data.message);
+        // socket.broadcast.emit("receiveMsg", data.message);
+
+    })
+
+    // socket.on("disconnect", () => {
+    //     console.log("user disconnected", socket.id);
+    // });
+})
 
 server.listen(PORT, () => console.log(`listening on ${PORT}`));
