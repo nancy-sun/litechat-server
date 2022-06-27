@@ -1,6 +1,6 @@
 const fs = require("fs");
 const { v4: uuid } = require("uuid");
-const { ROOM_PATH, USERS_PATH, readFile, writeFile } = require("../utils/APIutils");
+const { ROOM_PATH, USERS_PATH, readFile, writeFile } = require("../utils/APIUtils");
 
 function getRoomList(req, res) {
     readFile(ROOM_PATH, (data) => {
