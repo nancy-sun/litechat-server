@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "nodemon index.js --ignore './model/*.json'"
+    "dev": "nodemon index.js --ignore './model/*.json'",
+    "start": "node index.js"
   },
   "dependencies": {
     "axios": "^0.27.2",
