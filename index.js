@@ -19,6 +19,7 @@ const io = new Server(server, {
 });
 
 const APIURL = "https://litechat-server.herokuapp.com";
+// const APIURL = "http://localhost:5050";
 
 app.use(express.json());
 app.use(cors());
@@ -52,11 +53,14 @@ io.on("connection", (socket) => {
     });
 
     socket.on("sendSgn", (payload) => {
-        io.to(payload.userToSignal).emit("voiceJoined", { signal: payload.signal, caller: payload.caller });
+
+        // io.to(payload.userToSignal).emit("voiceJoined", { signal: payload.signal, caller: payload.caller });
+        socket.broadcast.to(payload.room).emit("voiceJoined", { signal: payload.signal, caller: payload.caller });
     });
 
     socket.on("returnSgn", (payload) => {
-        io.to(payload.caller).emit("receiveSgn", { signal: payload.signal, id: socket.id });
+        // io.to(payload.caller).emit("receiveSgn", { signal: payload.signal, id: socket.id });
+        socket.broadcast.to(payload.room).emit("receiveSgn", { signal: payload.signal, id: socket.id });
     });
 })
 
