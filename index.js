@@ -53,12 +53,12 @@ io.on("connection", (socket) => {
 
     socket.on("sendSgn", (payload) => {
         // io.to(payload.userToSignal).emit("voiceJoined", { signal: payload.signal, caller: payload.caller });
-        socket.broadcast.to(payload.room).emit("voiceJoined", { signal: payload.signal, caller: payload.caller });
+        io.to(payload.room).emit("voiceJoined", { signal: payload.signal, caller: payload.caller });
     });
 
     socket.on("returnSgn", (payload) => {
         // io.to(payload.caller).emit("receiveSgn", { signal: payload.signal, id: socket.id });
-        socket.broadcast.to(payload.room).emit("receiveSgn", { signal: payload.signal, id: socket.id });
+        io.to(payload.room).emit("receiveSgn", { signal: payload.signal, id: socket.id });
     });
 })
 
