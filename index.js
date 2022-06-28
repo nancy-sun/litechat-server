@@ -12,8 +12,8 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
     cors: {
-        origin: "https://lite-chat-react.herokuapp.com", //react frontend url
-        // origin: "http://localhost:3000", //react frontend url
+        // origin: "https://lite-chat-react.herokuapp.com", //react frontend url
+        origin: "http://localhost:3000", //react frontend url
         methods: ["GET", "POST", "DELETE"]
     }
 });
@@ -27,9 +27,10 @@ app.use("/room", room);
 
 
 io.on("connection", (socket) => {
-
+    let roomID;
     socket.on("join", (data, callback) => {
         socket.join(data);
+        roomID = data;
         console.log(`${socket.id} joined room ${data}`);
         callback(socket.id);
     })
@@ -38,9 +39,12 @@ io.on("connection", (socket) => {
         socket.broadcast.to(data.room).emit("receiveMsg", data.msg);
     })
 
-    // socket.on("disconnect", (roomID, userID) => {
-    //     axios.delete(`http://localhost:5050/room/${roomID}/${userID}`);
-    // });
+    socket.on("disconnect", () => {
+        console.log("user disconnected", socket.id)
+        axios.delete(`${APIURL}/room/${roomID}/${socket.id}`).then(() => {
+            console.log("user left");
+        }).catch(e => console.log(e));
+    });
 
     /* webRTC connections */
     socket.on("joinVoice", (roomID) => {
