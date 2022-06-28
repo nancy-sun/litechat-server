@@ -12,8 +12,8 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
     cors: {
-        origin: "https://litechat.netlify.app", //react frontend url
-        // origin: "http://localhost:3000", //react frontend url
+        // origin: "https://litechat.netlify.app", //react frontend url
+        origin: "http://localhost:3000", //react frontend url
         methods: ["GET", "POST", "DELETE"]
     }
 });
