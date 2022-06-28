@@ -12,11 +12,13 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
     cors: {
-        // origin: "https://litechat.netlify.app", //react frontend url
-        origin: "http://localhost:3000", //react frontend url
+        origin: "https://lite-chat-react.herokuapp.com", //react frontend url
+        // origin: "http://localhost:3000", //react frontend url
         methods: ["GET", "POST", "DELETE"]
     }
 });
+
+const APIURL = "https://litechat-server.herokuapp.com";
 
 app.use(express.json());
 app.use(cors());
@@ -41,9 +43,11 @@ io.on("connection", (socket) => {
 
     /* webRTC connections */
     socket.on("joinVoice", (roomID) => {
-        axios.get(`https://litechat-server.herokuapp.com/room/${roomID}/users`).then(response => {
+        axios.get(`${APIURL}/room/${roomID}/users`).then(response => {
             let users = response.data;
             socket.emit("allUsers", users);
+        }).catch((e) => {
+            console.log(e);
         })
     });
 

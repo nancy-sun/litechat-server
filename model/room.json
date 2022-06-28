@@ -1,7 +1,1 @@
-[
-    {
-        "roomID": "0",
-        "users": [],
-        "messageHistory": []
-    }
-]
+[{"roomID":"0","users":[{"userID":"6XMbdrxjbHlGOohAAAAL","username":"chewtle"},{"userID":"wKCjWLvfFlkVPj5lAAAK","username":"gengar"},{"userID":"VE0Oj7J_u2pkAzx-AAAR","username":"magby"},{"userID":"TIJ9VNQPFMbVPYChAAAX","username":"yanma"},{"userID":"s5yiLblImOBbSlcLAAAd","username":"jigglypuff"},{"userID":"Yr-h17nAxcc1ZESRAAAj","username":"hippowdon"},{"userID":"ds8DiUGigjW0J2w2AAAp","username":"stunfisk"},{"userID":"lT71bHwOes_HftKzAAAv","username":"huntail"},{"userID":"mtrhmFYFxSZqrkUGAAA1","username":"mismagius"},{"userID":"nSHNrLjtGD56BFBLAAA6","username":"combusken"},{"userID":"SU7HND6N75NqRBUfAABB","username":"lumineon"},{"userID":"G5mmsxDCTgnuM8KwAABH","username":"gossifleur"},{"userID":"zgbsp3Bi0txjHF-MAABN","username":"snom"}],"messageHistory":[{"messageID":"e2357c16-72ef-4876-ae8b-7674077f5fe1","message":"hello","time":"17:10"},{"messageID":"a76b6985-affd-4721-8da0-baef13edf7ca","message":"test","time":"17:11"}]}]
