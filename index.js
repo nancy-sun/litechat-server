@@ -37,9 +37,9 @@ io.on("connection", (socket) => {
         socket.broadcast.to(data.room).emit("receiveMsg", data.msg);
     })
 
-    socket.on("disconnect", () => {
-        console.log("user disconnected");
-    });
+    // socket.on("disconnect", () => {
+    //     console.log("user disconnected");
+    // });
 
     /* webRTC connections */
     socket.on("joinVoice", (roomID) => {
