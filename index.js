@@ -49,12 +49,14 @@ io.on("connection", (socket) => {
                     }
                 }
             }
-            axios.delete(`${APIURL}/room/${roomFound}/${socket.id}`).then(() => {
-                return;
-            }).catch(e => console.log(e));
         }).catch((e) => {
             console.log(e);
         })
+        if (roomFound) {
+            axios.delete(`${APIURL}/room/${roomFound}/${socket.id}`).then(() => {
+                return;
+            }).catch(e => console.log(e));
+        }
     });
 
     /* webRTC connections */
