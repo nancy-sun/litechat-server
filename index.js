@@ -37,14 +37,38 @@ io.on("connection", (socket) => {
         socket.broadcast.to(data.room).emit("receiveMsg", data.msg);
     })
 
-    // socket.on("disconnect", () => {
-    //     console.log("user disconnected");
-    // });
+    socket.on("disconnect", () => {
+        let roomFound;
+        axios.get(`${APIURL}/room`).then(response => {
+            let rooms = response.data;
+            for (let room of rooms) {
+                let users = room.users;
+                for (let user of users) {
+                    if (user === socket.id) {
+                        roomFound = room.roomID;
+                    }
+                }
+            }
+            axios.delete(`${APIURL}/room/${roomFound}/${socket.id}`).then(() => {
+                return;
+            }).catch(e => console.log(e));
+        }).catch((e) => {
+            console.log(e);
+        })
+    });
 
     /* webRTC connections */
     socket.on("joinVoice", (roomID) => {
-        axios.get(`${APIURL}/room/${roomID}/users`).then(response => {
-            let users = response.data;
+        axios.get(`${APIURL}/room`).then(response => {
+            let rooms = response.data;
+            let roomFound;
+            for (let room of rooms) {
+                if (room.roomID === roomID) {
+                    roomFound = room;
+                    console.log("room id")
+                }
+            }
+            let users = roomFound.users.filter(id => id !== socket.id);
             socket.emit("allUsers", users);
         }).catch((e) => {
             console.log(e);
@@ -52,12 +76,12 @@ io.on("connection", (socket) => {
     });
 
     socket.on("sendSgn", (payload) => {
-        io.in(payload.room).emit("voiceJoined", { signal: payload.signal, caller: payload.caller });
+        io.to(payload.userToSignal).emit("voiceJoined", { signal: payload.signal, caller: payload.caller });
         // socket.broadcast.to(payload.room).emit("voiceJoined", { signal: payload.signal, caller: payload.caller });
     });
 
     socket.on("returnSgn", (payload) => {
-        io.in(payload.room).emit("receiveSgn", { signal: payload.signal, id: socket.id });
+        io.to(payload.caller).emit("receiveSgn", { signal: payload.signal, id: socket.id });
         // socket.broadcast.to(payload.room).emit("receiveSgn", { signal: payload.signal, id: socket.id });
     });
 })

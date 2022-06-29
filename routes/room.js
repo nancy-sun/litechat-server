@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { getRoomList, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg, getAllUsers } = require("../controller/roomController");
+const { getUsersInRm, getRoomList, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg, getAllUsers } = require("../controller/roomController");
 
 router.route("/")
-    .get(getRoomList)
+    .get(getUsersInRm)
     .post(createNewRoom);
 
 router.route("/:roomID")
@@ -20,6 +20,8 @@ router.route("/:roomID/msg/:msgID")
 router.route("/:roomID/:userID")
     .post(newUserJoin)
     .delete(userLeft)
+
+
 
 
 module.exports = router;

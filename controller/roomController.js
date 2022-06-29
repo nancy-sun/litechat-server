@@ -61,7 +61,6 @@ function getAllUsers(req, res) {
         if (!data) {
             res.status(404).send("no user found");
         }
-
         const rooms = JSON.parse(data)
         const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID });
         res.status(200).json(roomFound.users);
@@ -163,4 +162,20 @@ function deleteMsg(req, res) {
     })
 }
 
-module.exports = { getRoomList, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg, getAllUsers };
+const getUsersInRm = (req, res) => {
+    readFile(ROOM_PATH, (data) => {
+        if (!data) {
+            res.status(404).send("data not found");
+        }
+        const roomList = JSON.parse(data).map((room) => {
+            const users = room.users.map((user) => user.userID)
+            return {
+                roomID: room.roomID,
+                users: users
+            }
+        })
+        res.status(200).json(roomList);
+    })
+}
+
+module.exports = { getUsersInRm, getRoomList, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg, getAllUsers };
