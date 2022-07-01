@@ -19,7 +19,7 @@ function getSingleRoom(req, res) {
         if (!data) {
             res.status(404).send("data not found");
         }
-        const rooms = JSON.parse(data)
+        const rooms = JSON.parse(data);
         const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID }); if (roomFound) {
             res.status(200).json(roomFound);
         } else {
@@ -47,7 +47,7 @@ function deleteRoom(req, res) {
 
 
 function newUserJoin(req, res) {
-    const { username, userID } = req.body;
+    const { userID, username } = req.body;
     readFile(ROOM_PATH, (data) => {
         if (!data) {
             res.status(404).send("data not found");
@@ -55,7 +55,7 @@ function newUserJoin(req, res) {
         const rooms = JSON.parse(data)
         const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID });
         const newUser = {
-            userID: req.params.userID,
+            userID: userID,
             username: username
         }
         if (roomFound) {
@@ -69,7 +69,7 @@ function newUserJoin(req, res) {
 }
 
 function userJoinVoice(req, res) {
-    const { username } = req.body;
+    const { username, userID } = req.body;
     readFile(ROOM_PATH, (data) => {
         if (!data) {
             res.status(404).send("data not found");
@@ -77,7 +77,7 @@ function userJoinVoice(req, res) {
         const rooms = JSON.parse(data)
         const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID });
         const newUser = {
-            userID: req.params.userID,
+            userID: userID,
             username: username
         }
         if (roomFound) {
