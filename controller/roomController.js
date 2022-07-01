@@ -1,24 +1,13 @@
 const fs = require("fs");
-const { v4: uuid } = require("uuid");
-const { ROOM_PATH, USERS_PATH, readFile, writeFile } = require("../utils/APIUtils");
+const { ROOM_PATH, readFile, writeFile } = require("../utils/APIUtils");
 
-function getRoomList(req, res) {
-    readFile(ROOM_PATH, (data) => {
-        if (!data) {
-            res.status(404).send("data not found");
-        }
-        const roomList = JSON.parse(data).map((room) => {
-            return room.roomID;
-        })
-        res.status(200).json(roomList);
-    })
-}
 
 function createNewRoom(req, res) {
     const { roomID } = req.body;
     const roomData = {
         roomID: roomID,
         users: [],
+        voiceUsers: [],
         messageHistory: []
     }
     writeFile(ROOM_PATH, roomData);
@@ -56,19 +45,9 @@ function deleteRoom(req, res) {
     })
 }
 
-function getAllUsers(req, res) {
-    readFile(ROOM_PATH, (data) => {
-        if (!data) {
-            res.status(404).send("no user found");
-        }
-        const rooms = JSON.parse(data)
-        const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID });
-        res.status(200).json(roomFound.users);
-    })
-}
 
 function newUserJoin(req, res) {
-    const { username } = req.body;
+    const { username, userID } = req.body;
     readFile(ROOM_PATH, (data) => {
         if (!data) {
             res.status(404).send("data not found");
@@ -89,6 +68,28 @@ function newUserJoin(req, res) {
     })
 }
 
+function userJoinVoice(req, res) {
+    const { username } = req.body;
+    readFile(ROOM_PATH, (data) => {
+        if (!data) {
+            res.status(404).send("data not found");
+        }
+        const rooms = JSON.parse(data)
+        const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID });
+        const newUser = {
+            userID: req.params.userID,
+            username: username
+        }
+        if (roomFound) {
+            roomFound.voiceUsers.push(newUser);
+            fs.writeFile(ROOM_PATH, JSON.stringify(rooms), (err) => { err ? console.log(err) : console.log("file written") });
+            res.status(201).json(roomFound.voiceUsers);
+        } else {
+            res.status(404).send("no room found");
+        }
+    })
+}
+
 function userLeft(req, res) {
     readFile(ROOM_PATH, (data) => {
         if (!data) {
@@ -98,12 +99,14 @@ function userLeft(req, res) {
         const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID });
         if (roomFound) {
             const users = roomFound.users;
+            const voiceUsers = roomFound.voiceUsers;
             const userIndxFound = users.findIndex((user) => { return user.userID === req.params.userID });
-
+            const voiceUserIndxFound = voiceUsers.findIndex((user) => { return user.userID === req.params.userID });
             if (userIndxFound < 0) {
                 res.status(404).send("no user found");
             } else {
                 users.splice(userIndxFound, 1);
+                voiceUsers.splice(voiceUserIndxFound, 1);
                 fs.writeFile(ROOM_PATH, JSON.stringify(rooms), (err) => { err ? console.log(err) : console.log("file written") });
                 res.status(200).json(roomFound);
             }
@@ -114,7 +117,7 @@ function userLeft(req, res) {
 }
 
 function postMessage(req, res) {
-    const { userID, message, time, messageID } = req.body;
+    const { username, message, time, messageID } = req.body;
     readFile(ROOM_PATH, (data) => {
         if (!data) {
             res.status(404).send("data not found");
@@ -126,7 +129,7 @@ function postMessage(req, res) {
             const newMessage = {
                 messageID,
                 message: message,
-                userID: userID,
+                username: username,
                 time
             }
             messages.push(newMessage);
@@ -178,4 +181,4 @@ const getUsersInRm = (req, res) => {
     })
 }
 
-module.exports = { getUsersInRm, getRoomList, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg, getAllUsers };
+module.exports = { userJoinVoice, getUsersInRm, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg };

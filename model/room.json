@@ -1,7 +1,20 @@
 [
     {
+        "roomID": "zugzug",
+        "users": [],
+        "voiceUsers": [],
+        "messageHistory": []
+    },
+    {
         "roomID": "0",
         "users": [],
+        "voiceUsers": [],
+        "messageHistory": []
+    },
+    {
+        "roomID": "neoisagoodboy",
+        "users": [],
+        "voiceUsers": [],
         "messageHistory": []
     }
 ]

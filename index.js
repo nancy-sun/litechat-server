@@ -70,7 +70,7 @@ io.on("connection", (socket) => {
                     console.log("room id")
                 }
             }
-            let users = roomFound.users.filter(id => id !== socket.id);
+            let users = roomFound.voiceUsers.filter(id => id !== socket.id);
             socket.emit("allUsers", users);
         }).catch((e) => {
             console.log(e);
