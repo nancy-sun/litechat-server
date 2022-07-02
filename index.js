@@ -69,15 +69,9 @@ io.on("connection", (socket) => {
 
     /* webRTC connections */
     socket.on("joinVoice", (roomID) => {
-        axios.get(`${APIURL}/room`).then(response => {
-            let rooms = response.data;
-            let roomFound;
-            for (let room of rooms) {
-                if (room.roomID === roomID) {
-                    roomFound = room;
-                }
-            }
-            let users = roomFound.voiceUsers.filter(user => user.userID !== socket.id);
+        axios.get(`${APIURL}/room/${roomID}`).then(response => {
+            let room = response.data;
+            let users = room.voiceUsers.filter(user => user.userID !== socket.id);
             socket.emit("allUsers", users);
         }).catch((e) => {
             console.log(e);
