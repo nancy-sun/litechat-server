@@ -29,7 +29,8 @@ function getSingleRoom(req, res) {
             res.status(404).send("data not found");
         }
         const rooms = JSON.parse(data)
-        const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID }); if (roomFound) {
+        const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID });
+        if (roomFound) {
             res.status(200).json(roomFound);
         } else {
             res.status(404).send("no room found");
@@ -42,7 +43,7 @@ function deleteRoom(req, res) {
         if (!data) {
             res.status(404).send("data not found");
         }
-        const rooms = JSON.parse(data)
+        const rooms = JSON.parse(data);
         const roomIndexFound = rooms.findIndex((room) => { return room.roomID === req.params.roomID });
         if (roomIndexFound < 0) {
             res.status(404).send("no room found");
@@ -61,12 +62,12 @@ function newUserJoin(req, res) {
         if (!data) {
             res.status(404).send("data not found");
         }
-        const rooms = JSON.parse(data)
+        const rooms = JSON.parse(data);
         const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID });
         const newUser = {
             userID: userID,
             username: username
-        }
+        };
         if (roomFound) {
             roomFound.users.push(newUser);
             fs.writeFile(ROOM_PATH, JSON.stringify(rooms), (err) => { err ? console.log(err) : console.log("file written") });
@@ -83,12 +84,12 @@ function newVoiceUserJoin(req, res) {
         if (!data) {
             res.status(404).send("data not found");
         }
-        const rooms = JSON.parse(data)
+        const rooms = JSON.parse(data);
         const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID });
         const newUser = {
             userID: userID,
             username: username
-        }
+        };
         if (roomFound) {
             roomFound.voiceUsers.push(newUser);
             fs.writeFile(ROOM_PATH, JSON.stringify(rooms), (err) => { err ? console.log(err) : console.log("file written") });
