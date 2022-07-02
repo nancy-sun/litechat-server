@@ -50,14 +50,17 @@ io.on("connection", (socket) => {
                     }
                 }
             }
-            axios.delete(`${APIURL}/room/${roomFound.roomID}/${socket.id}`).then((response) => {
-                if (response.data.users.length === 0) {
-                    axios.delete(`${APIURL}/room/${response.data.roomID}`).then(() => {
-                        return;
-                    }).catch(e => console.log(e));
-                }
-                return;
-            }).catch(e => console.log(e));
+            if (roomFound) {
+
+                axios.delete(`${APIURL}/room/${roomFound.roomID}/${socket.id}`).then((response) => {
+                    if (response.data.users.length === 0) {
+                        axios.delete(`${APIURL}/room/${response.data.roomID}`).then(() => {
+                            return;
+                        }).catch(e => console.log(e));
+                    }
+                    return;
+                }).catch(e => console.log(e));
+            }
         }).catch((e) => {
             console.log(e);
         })
