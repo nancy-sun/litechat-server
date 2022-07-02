@@ -54,19 +54,9 @@ function deleteRoom(req, res) {
     })
 }
 
-function getAllUsers(req, res) {
-    readFile(ROOM_PATH, (data) => {
-        if (!data) {
-            res.status(404).send("no user found");
-        }
-        const rooms = JSON.parse(data)
-        const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID });
-        res.status(200).json(roomFound.users);
-    })
-}
 
 function newUserJoin(req, res) {
-    const { username } = req.body;
+    const { username, userID } = req.body;
     readFile(ROOM_PATH, (data) => {
         if (!data) {
             res.status(404).send("data not found");
@@ -74,13 +64,35 @@ function newUserJoin(req, res) {
         const rooms = JSON.parse(data)
         const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID });
         const newUser = {
-            userID: req.params.userID,
+            userID: userID,
             username: username
         }
         if (roomFound) {
             roomFound.users.push(newUser);
             fs.writeFile(ROOM_PATH, JSON.stringify(rooms), (err) => { err ? console.log(err) : console.log("file written") });
-            res.status(201).json(newUser);
+            res.status(201).json(roomFound);
+        } else {
+            res.status(404).send("no room found");
+        }
+    })
+}
+
+function newVoiceUserJoin(req, res) {
+    const { username, userID } = req.body;
+    readFile(ROOM_PATH, (data) => {
+        if (!data) {
+            res.status(404).send("data not found");
+        }
+        const rooms = JSON.parse(data)
+        const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID });
+        const newUser = {
+            userID: userID,
+            username: username
+        }
+        if (roomFound) {
+            roomFound.voiceUsers.push(newUser);
+            fs.writeFile(ROOM_PATH, JSON.stringify(rooms), (err) => { err ? console.log(err) : console.log("file written") });
+            res.status(201).json(roomFound);
         } else {
             res.status(404).send("no room found");
         }
@@ -162,4 +174,4 @@ function deleteMsg(req, res) {
 
 
 
-module.exports = { getRoomList, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg, getAllUsers };
+module.exports = { newVoiceUserJoin, getRoomList, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg };
