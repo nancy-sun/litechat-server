@@ -72,10 +72,9 @@ io.on("connection", (socket) => {
             for (let room of rooms) {
                 if (room.roomID === roomID) {
                     roomFound = room;
-                    console.log("room id")
                 }
             }
-            let users = roomFound.users.filter(id => id !== socket.id);
+            let users = roomFound.voiceUsers.filter(id => id !== socket.id);
             socket.emit("allUsers", users);
         }).catch((e) => {
             console.log(e);

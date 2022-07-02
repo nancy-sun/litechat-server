@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { getUsersInRm, getRoomList, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg, getAllUsers } = require("../controller/roomController");
+const { getRoomList, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg, getAllUsers } = require("../controller/roomController");
 
 router.route("/")
-    .get(getUsersInRm)
+    .get(getRoomList)
     .post(createNewRoom);
 
 router.route("/:roomID")

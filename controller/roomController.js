@@ -1,5 +1,4 @@
 const fs = require("fs");
-const { v4: uuid } = require("uuid");
 const { ROOM_PATH, USERS_PATH, readFile, writeFile } = require("../utils/APIUtils");
 
 function getRoomList(req, res) {
@@ -7,10 +6,8 @@ function getRoomList(req, res) {
         if (!data) {
             res.status(404).send("data not found");
         }
-        const roomList = JSON.parse(data).map((room) => {
-            return room.roomID;
-        })
-        res.status(200).json(roomList);
+        const rooms = JSON.parse(data);
+        res.status(200).json(rooms);
     })
 }
 
@@ -19,6 +16,7 @@ function createNewRoom(req, res) {
     const roomData = {
         roomID: roomID,
         users: [],
+        voiceUsers: [],
         messageHistory: []
     }
     writeFile(ROOM_PATH, roomData);
@@ -162,20 +160,6 @@ function deleteMsg(req, res) {
     })
 }
 
-const getUsersInRm = (req, res) => {
-    readFile(ROOM_PATH, (data) => {
-        if (!data) {
-            res.status(404).send("data not found");
-        }
-        const roomList = JSON.parse(data).map((room) => {
-            const users = room.users.map((user) => user.userID)
-            return {
-                roomID: room.roomID,
-                users: users
-            }
-        })
-        res.status(200).json(roomList);
-    })
-}
 
-module.exports = { getUsersInRm, getRoomList, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg, getAllUsers };
+
+module.exports = { getRoomList, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg, getAllUsers };
