@@ -12,14 +12,14 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
     cors: {
-        origin: "https://lite-chat-react.herokuapp.com", //react frontend url
-        // origin: "http://localhost:3000", //react frontend url
+        // origin: "https://lite-chat-react.herokuapp.com", //react frontend url
+        origin: "http://localhost:3000", //react frontend url
         methods: ["GET", "POST", "DELETE"]
     }
 });
 
-const APIURL = "https://litechat-server.herokuapp.com";
-// const APIURL = "http://localhost:5050";
+// const APIURL = "https://litechat-server.herokuapp.com";
+const APIURL = "http://localhost:5050";
 
 app.use(express.json());
 app.use(cors());
@@ -38,23 +38,30 @@ io.on("connection", (socket) => {
     })
 
     socket.on("disconnect", () => {
-        let roomFound;
         axios.get(`${APIURL}/room`).then(response => {
+            let roomFound;
             let rooms = response.data;
             for (let room of rooms) {
                 let users = room.users;
                 for (let user of users) {
                     if (user === socket.id) {
-                        roomFound = room.roomID;
+                        roomFound = room;
+                        console.log(roomFound)
                     }
                 }
             }
-            axios.delete(`${APIURL}/room/${roomFound}/${socket.id}`).then(() => {
+            axios.delete(`${APIURL}/room/${roomFound.roomID}/${socket.id}`).then((response) => {
+                if (response.data.users.length === 0) {
+                    axios.delete(`${APIURL}/room/${response.data.roomID}`).then(() => {
+                        return;
+                    }).catch(e => console.log(e));
+                }
                 return;
             }).catch(e => console.log(e));
         }).catch((e) => {
             console.log(e);
         })
+
     });
 
     /* webRTC connections */
