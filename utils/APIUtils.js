@@ -1,6 +1,5 @@
 const fs = require("fs");
 const ROOM_PATH = "./model/room.json";
-const USERS_PATH = "./model/users.json";
 
 function readFile(file, callback) {
     fs.readFile(file, "utf-8", (err, data) => {
@@ -22,4 +21,4 @@ function writeFile(file, newData) {
     })
 }
 
-module.exports = { ROOM_PATH, USERS_PATH, readFile, writeFile };
+module.exports = { ROOM_PATH, readFile, writeFile };

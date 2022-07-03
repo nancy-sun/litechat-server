@@ -14,7 +14,7 @@ const io = new Server(server, {
     cors: {
         origin: "https://lite-chat-react.herokuapp.com", //react frontend url
         // origin: "http://localhost:3000", //react frontend url
-        methods: ["GET", "POST", "DELETE"]
+        methods: ["GET", "POST", "DELETE", "PUT"]
     }
 });
 
@@ -38,20 +38,20 @@ io.on("connection", (socket) => {
     })
 
     socket.on("disconnect", () => {
+        let roomFound;
         axios.get(`${APIURL}/room`).then(response => {
-            let roomFound;
             let rooms = response.data;
             for (let room of rooms) {
                 let users = room.users;
                 for (let user of users) {
-                    if (user === socket.id) {
+                    if (user.userID === socket.id) {
                         roomFound = room;
-                        console.log(roomFound)
+                    } else {
+                        continue;
                     }
                 }
             }
             if (roomFound) {
-
                 axios.delete(`${APIURL}/room/${roomFound.roomID}/${socket.id}`).then((response) => {
                     if (response.data.users.length === 0) {
                         axios.delete(`${APIURL}/room/${response.data.roomID}`).then(() => {
@@ -61,10 +61,10 @@ io.on("connection", (socket) => {
                     return;
                 }).catch(e => console.log(e));
             }
+            socket.broadcast.emit("disc", socket.id);
         }).catch((e) => {
             console.log(e);
         });
-
     });
 
     /* webRTC connections */

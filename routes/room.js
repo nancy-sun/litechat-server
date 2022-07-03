@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
 const { newVoiceUserJoin, getRoomList, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg } = require("../controller/roomController");
-
 
 router.route("/")
     .get(getRoomList)
@@ -12,7 +10,6 @@ router.route("/:roomID")
     .get(getSingleRoom)
     .delete(deleteRoom)
     .post(postMessage);
-
 
 router.route("/:roomID/user")
     .post(newUserJoin)
