@@ -38,8 +38,8 @@ io.on("connection", (socket) => {
     })
 
     socket.on("disconnect", () => {
+        let roomFound;
         axios.get(`${APIURL}/room`).then(response => {
-            let roomFound;
             let rooms = response.data;
             for (let room of rooms) {
                 let users = room.users;
@@ -61,10 +61,10 @@ io.on("connection", (socket) => {
                     return;
                 }).catch(e => console.log(e));
             }
+            socket.broadcast.emit("disc", socket.id);
         }).catch((e) => {
             console.log(e);
         });
-
     });
 
     /* webRTC connections */

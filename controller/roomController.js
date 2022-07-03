@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { ROOM_PATH, USERS_PATH, readFile, writeFile } = require("../utils/APIUtils");
+const { ROOM_PATH, readFile, writeFile } = require("../utils/APIUtils");
 
 function getRoomList(req, res) {
     readFile(ROOM_PATH, (data) => {
@@ -110,11 +110,15 @@ function userLeft(req, res) {
         if (roomFound) {
             const users = roomFound.users;
             const userIndxFound = users.findIndex((user) => { return user.userID === req.params.userID });
-
+            const voiceUsers = roomFound.voiceUsers;
+            const voiceUserIndexFound = voiceUsers.findIndex((user) => { return user.userID === req.params.userID });
             if (userIndxFound < 0) {
                 res.status(404).send("no user found");
             } else {
                 users.splice(userIndxFound, 1);
+                if (voiceUserIndexFound >= 0) {
+                    voiceUsers.splice(voiceUserIndexFound, 1);
+                }
                 fs.writeFile(ROOM_PATH, JSON.stringify(rooms), (err) => { err ? console.log(err) : console.log("file written") });
                 res.status(200).json(roomFound);
             }
