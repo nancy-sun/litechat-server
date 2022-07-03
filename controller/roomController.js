@@ -1,5 +1,16 @@
 const fs = require("fs");
+
 const { ROOM_PATH, readFile, writeFile } = require("../utils/APIUtils");
+
+function getRoomList(req, res) {
+    readFile(ROOM_PATH, (data) => {
+        if (!data) {
+            res.status(404).send("data not found");
+        }
+        const rooms = JSON.parse(data);
+        res.status(200).json(rooms);
+    })
+}
 
 
 function createNewRoom(req, res) {
@@ -20,7 +31,8 @@ function getSingleRoom(req, res) {
             res.status(404).send("data not found");
         }
         const rooms = JSON.parse(data);
-        const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID }); if (roomFound) {
+        const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID });
+        if (roomFound) {
             res.status(200).json(roomFound);
         } else {
             res.status(404).send("no room found");
@@ -33,7 +45,7 @@ function deleteRoom(req, res) {
         if (!data) {
             res.status(404).send("data not found");
         }
-        const rooms = JSON.parse(data)
+        const rooms = JSON.parse(data);
         const roomIndexFound = rooms.findIndex((room) => { return room.roomID === req.params.roomID });
         if (roomIndexFound < 0) {
             res.status(404).send("no room found");
@@ -47,21 +59,44 @@ function deleteRoom(req, res) {
 
 
 function newUserJoin(req, res) {
-    const { userID, username } = req.body;
+
+    const { username, userID } = req.body;
     readFile(ROOM_PATH, (data) => {
         if (!data) {
             res.status(404).send("data not found");
         }
-        const rooms = JSON.parse(data)
+        const rooms = JSON.parse(data);
         const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID });
         const newUser = {
             userID: userID,
             username: username
-        }
+        };
         if (roomFound) {
             roomFound.users.push(newUser);
             fs.writeFile(ROOM_PATH, JSON.stringify(rooms), (err) => { err ? console.log(err) : console.log("file written") });
-            res.status(201).json(newUser);
+            res.status(201).json(roomFound);
+        } else {
+            res.status(404).send("no room found");
+        }
+    })
+}
+
+function newVoiceUserJoin(req, res) {
+    const { username, userID } = req.body;
+    readFile(ROOM_PATH, (data) => {
+        if (!data) {
+            res.status(404).send("data not found");
+        }
+        const rooms = JSON.parse(data);
+        const roomFound = rooms.find((room) => { return room.roomID === req.params.roomID });
+        const newUser = {
+            userID: userID,
+            username: username
+        };
+        if (roomFound) {
+            roomFound.voiceUsers.push(newUser);
+            fs.writeFile(ROOM_PATH, JSON.stringify(rooms), (err) => { err ? console.log(err) : console.log("file written") });
+            res.status(201).json(roomFound);
         } else {
             res.status(404).send("no room found");
         }
@@ -165,20 +200,8 @@ function deleteMsg(req, res) {
     })
 }
 
-const getUsersInRm = (req, res) => {
-    readFile(ROOM_PATH, (data) => {
-        if (!data) {
-            res.status(404).send("data not found");
-        }
-        const roomList = JSON.parse(data).map((room) => {
-            const users = room.users.map((user) => user.userID)
-            return {
-                roomID: room.roomID,
-                users: users
-            }
-        })
-        res.status(200).json(roomList);
-    })
-}
 
-module.exports = { userJoinVoice, getUsersInRm, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg };
+
+
+module.exports = { newVoiceUserJoin, getRoomList, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg };
+

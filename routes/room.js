@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { userJoinVoice, getUsersInRm, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg } = require("../controller/roomController");
+
+const { newVoiceUserJoin, getRoomList, createNewRoom, getSingleRoom, newUserJoin, deleteRoom, userLeft, postMessage, deleteMsg } = require("../controller/roomController");
+
 
 router.route("/")
-    .get(getUsersInRm)
+    .get(getRoomList)
     .post(createNewRoom);
 
 router.route("/:roomID")
@@ -11,16 +13,16 @@ router.route("/:roomID")
     .delete(deleteRoom)
     .post(postMessage);
 
+
+router.route("/:roomID/user")
+    .post(newUserJoin)
+    .put(newVoiceUserJoin);
+
 router.route("/:roomID/msg/:msgID")
     .delete(deleteMsg);
 
 router.route("/:roomID/:userID")
-    .delete(userLeft)
-
-
-router.route("/:roomID/user")
-    .put(userJoinVoice)
-    .post(newUserJoin)
+    .delete(userLeft);
 
 
 module.exports = router;

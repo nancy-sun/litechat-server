@@ -38,31 +38,40 @@ io.on("connection", (socket) => {
     })
 
     socket.on("disconnect", () => {
-        let roomFound;
         axios.get(`${APIURL}/room`).then(response => {
+            let roomFound;
             let rooms = response.data;
             for (let room of rooms) {
                 let users = room.users;
                 for (let user of users) {
                     if (user === socket.id) {
-                        roomFound = room.roomID;
+                        roomFound = room;
+                        console.log(roomFound)
                     }
                 }
             }
-            axios.delete(`${APIURL}/room/${roomFound}/${socket.id}`).then(() => {
-                return;
-            }).catch(e => console.log(e));
+            if (roomFound) {
+
+                axios.delete(`${APIURL}/room/${roomFound.roomID}/${socket.id}`).then((response) => {
+                    if (response.data.users.length === 0) {
+                        axios.delete(`${APIURL}/room/${response.data.roomID}`).then(() => {
+                            return;
+                        }).catch(e => console.log(e));
+                    }
+                    return;
+                }).catch(e => console.log(e));
+            }
         }).catch((e) => {
             console.log(e);
-        })
+        });
+
     });
 
     /* webRTC connections */
     socket.on("joinVoice", (roomID) => {
         axios.get(`${APIURL}/room/${roomID}`).then(response => {
-            let voiceUsers = response.data.voiceUsers;
-            console.log(voiceUsers)
-            let users = voiceUsers.filter(user => user.userID !== socket.id);
+            let room = response.data;
+            let users = room.voiceUsers.filter(user => user.userID !== socket.id);
             socket.emit("allUsers", users);
         }).catch((e) => {
             console.log(e);
@@ -71,12 +80,10 @@ io.on("connection", (socket) => {
 
     socket.on("sendSgn", (payload) => {
         io.to(payload.userToSignal).emit("voiceJoined", { signal: payload.signal, caller: payload.caller });
-        // socket.broadcast.to(payload.room).emit("voiceJoined", { signal: payload.signal, caller: payload.caller });
     });
 
     socket.on("returnSgn", (payload) => {
         io.to(payload.caller).emit("receiveSgn", { signal: payload.signal, id: socket.id });
-        // socket.broadcast.to(payload.room).emit("receiveSgn", { signal: payload.signal, id: socket.id });
     });
 })
 
