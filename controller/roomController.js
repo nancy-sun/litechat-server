@@ -129,7 +129,7 @@ function userLeft(req, res) {
 }
 
 function postMessage(req, res) {
-    const { userID, message, time, messageID } = req.body;
+    const { username, message, time, messageID } = req.body;
     readFile(ROOM_PATH, (data) => {
         if (!data) {
             res.status(404).send("data not found");
@@ -141,7 +141,7 @@ function postMessage(req, res) {
             const newMessage = {
                 messageID,
                 message: message,
-                userID: userID,
+                username: username,
                 time
             }
             messages.push(newMessage);
