@@ -14,7 +14,7 @@ const io = new Server(server, {
     cors: {
         origin: "https://lite-chat-react.herokuapp.com", //react frontend url
         // origin: "http://localhost:3000", //react frontend url
-        methods: ["GET", "POST", "DELETE"]
+        methods: ["GET", "POST", "DELETE", "PUT"]
     }
 });
 
@@ -51,15 +51,16 @@ io.on("connection", (socket) => {
                     }
                 }
             }
-
-            axios.delete(`${APIURL}/room/${roomFound.roomID}/${socket.id}`).then((response) => {
-                if (response.data.users.length === 0) {
-                    axios.delete(`${APIURL}/room/${response.data.roomID}`).then(() => {
-                        return;
-                    }).catch(e => console.log(e));
-                }
-                return;
-            }).catch(e => console.log(e));
+            if (roomFound) {
+                axios.delete(`${APIURL}/room/${roomFound.roomID}/${socket.id}`).then((response) => {
+                    if (response.data.users.length === 0) {
+                        axios.delete(`${APIURL}/room/${response.data.roomID}`).then(() => {
+                            return;
+                        }).catch(e => console.log(e));
+                    }
+                    return;
+                }).catch(e => console.log(e));
+            }
         }).catch((e) => {
             console.log(e);
         });
