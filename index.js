@@ -44,23 +44,22 @@ io.on("connection", (socket) => {
             for (let room of rooms) {
                 let users = room.users;
                 for (let user of users) {
-                    if (user === socket.id) {
+                    if (user.userID === socket.id) {
                         roomFound = room;
-                        console.log(roomFound)
+                    } else {
+                        continue;
                     }
                 }
             }
-            if (roomFound) {
 
-                axios.delete(`${APIURL}/room/${roomFound.roomID}/${socket.id}`).then((response) => {
-                    if (response.data.users.length === 0) {
-                        axios.delete(`${APIURL}/room/${response.data.roomID}`).then(() => {
-                            return;
-                        }).catch(e => console.log(e));
-                    }
-                    return;
-                }).catch(e => console.log(e));
-            }
+            axios.delete(`${APIURL}/room/${roomFound.roomID}/${socket.id}`).then((response) => {
+                if (response.data.users.length === 0) {
+                    axios.delete(`${APIURL}/room/${response.data.roomID}`).then(() => {
+                        return;
+                    }).catch(e => console.log(e));
+                }
+                return;
+            }).catch(e => console.log(e));
         }).catch((e) => {
             console.log(e);
         });
