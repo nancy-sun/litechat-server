@@ -120,7 +120,7 @@ async function deleteMsg(req, res) {
     }
     const msgFound = await Room.findOneAndUpdate({ _id: roomID }, { $pull: { messageHistory: { _id: msgID } } }, { new: true });
     if (!msgFound) {
-        return res.status(404).json({ error: "no user found" });
+        return res.status(404).json({ error: "no message found" });
     }
     try {
         res.status(200).json(msgFound);
