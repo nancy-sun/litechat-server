@@ -5,26 +5,20 @@ const axios = require("axios");
 
 const cors = require("cors");
 require("dotenv").config();
-const { PORT, DATABASE_URI } = process.env;
+const { PORT, DATABASE_URI, CLIENT_URL, SERVER_URL } = process.env;
 
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
     cors: {
-        origin: "https://lite-chat-react.herokuapp.com", //react frontend url
-        // origin: "http://localhost:3000", //react frontend url
+        origin: CLIENT_URL, //react frontend url
         methods: ["GET", "POST", "DELETE", "PUT"]
     }
 });
 
-const APIURL = "https://litechat-server.herokuapp.com";
-// const APIURL = "http://localhost:5050";
-
 const mongoose = require("mongoose");
 mongoose.connect(DATABASE_URI);
-
-
 
 app.use(express.json());
 app.use(cors());
@@ -44,7 +38,7 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
         let roomFound;
-        axios.get(`${APIURL}/room`).then(response => {
+        axios.get(`${SERVER_URL}/room`).then(response => {
             let rooms = response.data;
             for (let room of rooms) {
                 let users = room.users;
@@ -57,9 +51,9 @@ io.on("connection", (socket) => {
                 }
             }
             if (roomFound) {
-                axios.delete(`${APIURL}/room/${roomFound._id}/${socket.id}`).then((response) => {
+                axios.delete(`${SERVER_URL}/room/${roomFound._id}/${socket.id}`).then((response) => {
                     if (response.data.users.length === 0) {
-                        axios.delete(`${APIURL}/room/${response.data._id}`).then(() => {
+                        axios.delete(`${SERVER_URL}/room/${response.data._id}`).then(() => {
                             return;
                         }).catch(e => console.log(e));
                     }
@@ -74,7 +68,7 @@ io.on("connection", (socket) => {
 
     /* webRTC connections */
     socket.on("joinVoice", (roomID) => {
-        axios.get(`${APIURL}/room/${roomID}`).then(response => {
+        axios.get(`${SERVER_URL}/room/${roomID}`).then(response => {
             let room = response.data;
             let users = room.voiceUsers.filter(user => user.userID !== socket.id);
             socket.emit("allUsers", users);
