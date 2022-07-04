@@ -57,9 +57,9 @@ io.on("connection", (socket) => {
                 }
             }
             if (roomFound) {
-                axios.delete(`${APIURL}/room/${roomFound.roomID}/${socket.id}`).then((response) => {
+                axios.delete(`${APIURL}/room/${roomFound._id}/${socket.id}`).then((response) => {
                     if (response.data.users.length === 0) {
-                        axios.delete(`${APIURL}/room/${response.data.roomID}`).then(() => {
+                        axios.delete(`${APIURL}/room/${response.data._id}`).then(() => {
                             return;
                         }).catch(e => console.log(e));
                     }

@@ -41,7 +41,8 @@ async function deleteRoom(req, res) {
     if (!roomFound) {
         return res.status(404).json({ error: "no room found" });
     }
-    res.status(200).json(roomFound);
+    const rooms = await Room.find({});
+    res.status(200).json(rooms);
 }
 
 async function newUserJoin(req, res) {
@@ -81,15 +82,13 @@ async function userLeft(req, res) {
     if (!mongoose.Types.ObjectId.isValid(roomID)) {
         return res.status(404).json({ error: "no room found" });
     }
-    if (!mongoose.Types.ObjectId.isValid(userID)) {
-        return res.status(404).json({ error: "no user found" });
-    }
-    const userFound = await Room.findOneAndUpdate({ _id: roomID }, { $pull: { users: { _id: userID }, voiceUsers: { userID: userID } } }, { new: true });
+    const userFound = await Room.findOneAndUpdate({ _id: roomID }, { $pull: { users: { userID: userID }, voiceUsers: { userID: userID } } }, { new: true });
+    const room = await Room.findById(roomID);
     if (!userFound) {
         return res.status(404).json({ error: "no user found" });
     }
     try {
-        res.status(200).json(userFound);
+        res.status(200).json(room);
     } catch (err) {
         res.status(400).json(err.message);
     }
