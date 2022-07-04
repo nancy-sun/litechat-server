@@ -5,7 +5,7 @@ const axios = require("axios");
 
 const cors = require("cors");
 require("dotenv").config();
-const { PORT } = process.env;
+const { PORT, DATABASE_URI } = process.env;
 
 const http = require("http");
 const server = http.createServer(app);
@@ -20,6 +20,11 @@ const io = new Server(server, {
 
 const APIURL = "https://litechat-server.herokuapp.com";
 // const APIURL = "http://localhost:5050";
+
+const mongoose = require("mongoose");
+mongoose.connect(DATABASE_URI);
+
+
 
 app.use(express.json());
 app.use(cors());
