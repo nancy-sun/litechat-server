@@ -5,7 +5,7 @@ const axios = require("axios");
 
 const cors = require("cors");
 require("dotenv").config();
-const { PORT, DATABASE_URI, CLIENT_URL, SERVER_URL } = process.env;
+const { PORT, DATABASE_URI, CLIENT_URL, SERVER_URL, LOCAL_URL, NODE_ENV } = process.env;
 
 const http = require("http");
 const server = http.createServer(app);
@@ -22,7 +22,15 @@ const mongoose = require("mongoose");
 mongoose.connect(DATABASE_URI);
 
 app.use(express.json());
-app.use(cors(corsConfig));
+app.use(cors({
+    origin: (origin, callback) => {
+        if (origin !== CLIENT_URL && NODE_ENV === "production") {
+            return callback("Access to this host is denied", false);
+        } else {
+            return callback(null, true);
+        }
+    }
+}));
 app.use("/room", room);
 
 
