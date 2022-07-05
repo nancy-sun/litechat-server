@@ -29,6 +29,7 @@ io.on("connection", (socket) => {
     socket.on("join", (data, callback) => {
         socket.join(data);
         console.log(`${socket.id} joined room ${data}`);
+        socket.to(data).emit("newJoin", socket.id);
         callback(socket.id);
     })
 
