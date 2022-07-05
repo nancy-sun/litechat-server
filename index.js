@@ -10,18 +10,19 @@ const { PORT, DATABASE_URI, CLIENT_URL, SERVER_URL } = process.env;
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
+const corsConfig = {
+    origin: CLIENT_URL, //react frontend url
+    methods: ["GET", "POST", "DELETE", "PUT"]
+}
 const io = new Server(server, {
-    cors: {
-        origin: CLIENT_URL, //react frontend url
-        methods: ["GET", "POST", "DELETE", "PUT"]
-    }
+    cors: corsConfig
 });
 
 const mongoose = require("mongoose");
 mongoose.connect(DATABASE_URI);
 
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsConfig));
 app.use("/room", room);
 
 
