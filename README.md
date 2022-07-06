@@ -48,7 +48,9 @@ $ npm run dev
 ### Overview  
 - local host PORT: 5050
 - local host API URL: http://localhost:5050
-- 
+- API live URL: https://lite-chat-react.herokuapp.com/  
+- **Note** that this is only for demo purpose, data should not be easily accessible. Cors and environment variables are configured to only allow client application users to access data and in local development environment. This is for the purpose of basic data protection. However, database security is not guarenteed. Ideally, more advanced protection should be implemented for the database including but not limited to authentication and authorization, encryption, etc.  
+
 
 ### API Routes  
   
@@ -320,11 +322,11 @@ $ npm run dev
   
   
 
-### Future Discussions
+## Future Discussions
 - (TBD) build a `STUN` server  
   
   
-### Application prototype  
+## Application prototype  
 *details at [litechat](https://github.com/nancy-sun/litechat)*  
 ![prototype2](https://user-images.githubusercontent.com/99620863/177505437-6a8c3b25-77d1-4bda-92af-e5201baf4e87.svg)
 
