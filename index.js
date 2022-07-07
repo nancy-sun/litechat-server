@@ -22,15 +22,17 @@ const mongoose = require("mongoose");
 mongoose.connect(DATABASE_URI);
 
 app.use(express.json());
-app.use(cors({
-    origin: (origin, callback) => {
-        if (origin !== CLIENT_URL && NODE_ENV === "production") {
-            return callback("Access to this host is denied", false);
-        } else {
-            return callback(null, true);
-        }
-    }
-}));
+app.use(cors());
+
+// app.use(cors({
+//     origin: (origin, callback) => {
+//         if (origin !== CLIENT_URL && NODE_ENV === "production") {
+//             return callback("Access to this host is denied", false);
+//         } else {
+//             return callback(null, true);
+//         }
+//     }
+// }));
 app.use("/room", room);
 
 
