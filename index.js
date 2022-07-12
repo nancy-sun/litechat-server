@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const room = require("./routes/room");
-const axios = require("axios");
 
 const cors = require("cors");
 require("dotenv").config();
@@ -26,15 +25,15 @@ app.use(cors());
 
 app.use(cors({
     origin: (origin, callback) => {
-        if (origin !== CLIENT_URL && origin !== SERVER_URL) {
-            return callback("Access to this host is denied", false);
-        } else {
-            return callback(null, true);
-        }
+        // if (origin !== CLIENT_URL && origin !== SERVER_URL) {
+        //     return callback("Access to this host is denied", false);
+        // } else {
+        return callback(null, true);
+        // }
     }
 }));
 app.use("/room", room);
-
+const Room = require("./model/roomModel");
 
 io.on("connection", (socket) => {
     socket.on("join", (data, callback) => {
@@ -49,44 +48,26 @@ io.on("connection", (socket) => {
     })
 
     socket.on("disconnect", () => {
-        let roomFound;
-        axios.get(`${SERVER_URL}/room`).then(response => {
-            let rooms = response.data;
-            for (let room of rooms) {
-                let users = room.users;
-                for (let user of users) {
-                    if (user.userID === socket.id) {
-                        roomFound = room;
-                    } else {
-                        continue;
-                    }
+        async function handleDisc() {
+            let room = await Room.findOne({ "users.userID": socket.id });
+            if (room) {
+                let updatedRm = await Room.findOneAndUpdate({ _id: room._id }, { $pull: { users: { userID: socket.id }, voiceUsers: { userID: socket.id } } }, { new: true });
+                if (updatedRm.users.length === 0) {
+                    await Room.findOneAndDelete({ _id: room._id });
                 }
             }
-            if (roomFound) {
-                axios.delete(`${SERVER_URL}/room/${roomFound._id}/${socket.id}`).then((response) => {
-                    if (response.data.users.length === 0) {
-                        axios.delete(`${SERVER_URL}/room/${response.data._id}`).then(() => {
-                            return;
-                        }).catch(e => console.log(e));
-                    }
-                    return;
-                }).catch(e => console.log(e));
-            }
-            socket.broadcast.emit("disc", socket.id);
-        }).catch((e) => {
-            console.log(e);
-        });
+        }
+        handleDisc();
+        socket.broadcast.emit("disc", socket.id);
     });
 
     /* webRTC connections */
     socket.on("joinVoice", (roomID) => {
-        axios.get(`${SERVER_URL}/room/${roomID}`).then(response => {
-            let room = response.data;
-            let users = room.voiceUsers.filter(user => user.userID !== socket.id);
+        async function handleVoiceConnect(roomID) {
+            let users = await Room.find({ _id: roomID, "voiceUsers.userID": { $ne: socket.id } });
             socket.emit("allUsers", users);
-        }).catch((e) => {
-            console.log(e);
-        })
+        }
+        handleVoiceConnect(roomID);
     });
 
     socket.on("sendSgn", (payload) => {
