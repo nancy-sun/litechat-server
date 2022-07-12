@@ -15,14 +15,11 @@ router.route("/:roomID/user")
     .post(newUserJoin)
     .put(newVoiceUserJoin);
 
-
 router.route("/:roomID/msg/:msgID")
     .delete(deleteMsg);
 
 router.route("/:roomID/:userID")
-    .delete(userLeft)
-
-
+    .delete(userLeft);
 
 
 module.exports = router;
