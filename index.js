@@ -64,7 +64,10 @@ io.on("connection", (socket) => {
     /* webRTC connections */
     socket.on("joinVoice", (roomID) => {
         async function handleVoiceConnect(roomID) {
-            let users = await Room.find({ _id: roomID, "voiceUsers.userID": { $ne: socket.id } });
+            let room = await Room.findOne({ _id: roomID });
+            let users = room.users.filter((user) => {
+                return user.userID !== socket.id;
+            })
             socket.emit("allUsers", users);
         }
         handleVoiceConnect(roomID);
