@@ -80,6 +80,11 @@ io.on("connection", (socket) => {
     socket.on("returnSgn", (payload) => {
         io.to(payload.caller).emit("receiveSgn", { signal: payload.signal, id: socket.id });
     });
+
+    socket.on("voiceConfig", (payload) => {
+        socket.broadcast.emit("voiceConfig", payload);
+    })
+
 })
 
 server.listen(PORT, () => console.log(`listening on ${PORT}`));
