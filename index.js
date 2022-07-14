@@ -65,7 +65,7 @@ io.on("connection", (socket) => {
     socket.on("joinVoice", (roomID) => {
         async function handleVoiceConnect(roomID) {
             let room = await Room.findOne({ _id: roomID });
-            let users = room.users.filter((user) => {
+            let users = room.voiceUsers.filter((user) => {
                 return user.userID !== socket.id;
             })
             socket.emit("allUsers", users);
