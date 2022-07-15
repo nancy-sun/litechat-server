@@ -1,12 +1,12 @@
 const Room = require("../model/roomModel");
 const mongoose = require("mongoose");
 
-async function getRoomList(req, res) {
+async function getRoomList(_req, res) {
     const rooms = await Room.find({});
     res.status(200).json(rooms);
 }
 
-async function createNewRoom(req, res) {
+async function createNewRoom(_req, res) {
     const roomData = {
         users: [],
         voiceUsers: [],

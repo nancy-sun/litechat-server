@@ -4,7 +4,7 @@ const room = require("./routes/room");
 
 const cors = require("cors");
 require("dotenv").config();
-const { PORT, DATABASE_URI, CLIENT_URL, SERVER_URL, NODE_ENV } = process.env;
+const { PORT, DATABASE_URI, CLIENT_URL, NODE_ENV } = process.env;
 
 const http = require("http");
 const server = http.createServer(app);
