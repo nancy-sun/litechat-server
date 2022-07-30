@@ -328,5 +328,6 @@ $ npm run dev
   
 ## Application prototype  
 *details at [litechat](https://github.com/nancy-sun/litechat)*  
-![prototype2](https://user-images.githubusercontent.com/99620863/177505437-6a8c3b25-77d1-4bda-92af-e5201baf4e87.svg)
+![litechatPrototype](https://user-images.githubusercontent.com/99620863/181904643-b83ac8fb-8bd6-4436-af5f-9b2577b38fc2.svg)
+
 
