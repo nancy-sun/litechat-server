@@ -330,4 +330,5 @@ $ npm run dev
 *details at [litechat](https://github.com/nancy-sun/litechat)*  
 ![litechatPrototype](https://user-images.githubusercontent.com/99620863/181904643-b83ac8fb-8bd6-4436-af5f-9b2577b38fc2.svg)
 
-
+## Author  
+[@Nancy](https://github.com/nancy-sun)   
