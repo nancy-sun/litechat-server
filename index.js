@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const room = require("./routes/room");
+const Room = require("./model/roomModel");
 
 const cors = require("cors");
 require("dotenv").config();
@@ -32,8 +33,8 @@ app.use(cors({
         }
     }
 }));
+
 app.use("/room", room);
-const Room = require("./model/roomModel");
 
 io.on("connection", (socket) => {
     socket.on("join", (data, callback) => {
